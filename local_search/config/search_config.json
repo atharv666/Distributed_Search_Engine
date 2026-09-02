@@ -1,0 +1,8 @@
+{
+  "documents_file": "../data/documents.jsonl",
+  "index_file": "../data/indexes/base_inverted_index.json",
+  "default_top_k": 10,
+  "minimum_token_length": 2,
+  "excluded_tokens": [],
+  "snippet_length": 240
+}

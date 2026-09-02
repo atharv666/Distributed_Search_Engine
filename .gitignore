@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+data/raw/*.html
+data/metadata.jsonl
+data/documents.jsonl
+data/indexes/*.json
+data/indexes/nodes/*.json
+data/indexes/nodes/*.json
+data/shards/*.jsonl
+data/shards/*.json
+data/crawl.log

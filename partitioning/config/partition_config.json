@@ -1,0 +1,6 @@
+{
+  "documents_file": "../data/documents.jsonl",
+  "output_directory": "../data/shards",
+  "shard_count": 3,
+  "strategy": "range"
+}

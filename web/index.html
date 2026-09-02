@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Distributed Search</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-layout">
+    <aside class="side-panel"><div class="brand"><p class="eyebrow">FAULT-TOLERANT RETRIEVAL</p><h1>Distributed<br>Search</h1><p>Partitioned technology corpus</p></div><section class="node-controls"><h2>Search nodes</h2><p class="panel-note">Start the shards you want to include in the distributed query.</p><div id="node-controls"></div></section><section id="metrics" class="metrics" hidden><h2>Query execution</h2><div id="metrics-content"></div></section></aside>
+    <section class="content"><header><h2>Search the corpus</h2><p class="subtitle">Results are ranked by TF-IDF cosine similarity across available shards.</p></header><form id="search-form" class="search-bar"><input id="query" type="search" placeholder="Search Python, gRPC, Kubernetes…" autocomplete="off" required><button>Search</button></form><p id="message" class="message">Start one or more search nodes, then enter a query.</p><section id="results" class="results" aria-live="polite"></section></section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

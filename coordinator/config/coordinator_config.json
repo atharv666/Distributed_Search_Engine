@@ -1,0 +1,10 @@
+{
+  "nodes": [
+    {"node_id": "node_1", "address": "localhost:50051"},
+    {"node_id": "node_2", "address": "localhost:50052"},
+    {"node_id": "node_3", "address": "localhost:50053"}
+  ],
+  "node_timeout_seconds": 3.0,
+  "local_top_k": 20,
+  "final_top_k": 10
+}

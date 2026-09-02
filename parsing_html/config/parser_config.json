@@ -1,0 +1,6 @@
+{
+  "raw_directory": "../data/raw",
+  "metadata_file": "../data/metadata.jsonl",
+  "documents_file": "../data/documents.jsonl",
+  "minimum_content_characters": 80
+}

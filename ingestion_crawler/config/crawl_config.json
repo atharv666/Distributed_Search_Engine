@@ -1,0 +1,15 @@
+{
+  "seeds": [
+    {"url": "https://docs.python.org/3/tutorial/", "source": "Python Documentation"},
+    {"url": "https://grpc.io/docs/", "source": "gRPC Documentation"},
+    {"url": "https://kubernetes.io/docs/concepts/", "source": "Kubernetes Documentation"}
+  ],
+  "allowed_domains": ["docs.python.org", "grpc.io", "kubernetes.io"],
+  "max_pages": 30,
+  "max_depth": 1,
+  "request_delay_seconds": 1.0,
+  "request_timeout_seconds": 15,
+  "user_agent": "DistributedSearchEngineAcademicCrawler/0.1 (contact: replace-with-your-email@example.com)",
+  "output_directory": "../data/raw",
+  "metadata_file": "../data/metadata.jsonl"
+}

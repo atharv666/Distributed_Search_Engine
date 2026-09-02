@@ -1,0 +1,8 @@
+{
+  "shards_directory": "../data/shards",
+  "partition_manifest": "../data/shards/partition_manifest.json",
+  "indexes_directory": "../data/indexes/nodes",
+  "global_statistics_file": "../data/indexes/global_statistics.json",
+  "minimum_token_length": 2,
+  "excluded_tokens": []
+}
