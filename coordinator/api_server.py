@@ -15,6 +15,7 @@ from .engine.coordinator import SearchCoordinator
 
 ROOT = Path(__file__).resolve().parent.parent
 WEB_DIRECTORY = ROOT / "web"
+DATA_DIRECTORY = ROOT / "data"
 app = FastAPI(title="Distributed Search", version="0.1")
 coordinator: SearchCoordinator | None = None
 node_processes: dict[str, subprocess.Popen] = {}
@@ -23,9 +24,9 @@ node_processes: dict[str, subprocess.Popen] = {}
 def node_launch_arguments(node_id: str) -> list[str]:
     shard_id = node_id.rsplit("_", 1)[-1]
     return [sys.executable, "-m", "search_node.server", "--node-id", node_id, "--port", str(50050 + int(shard_id)),
-            "--index", str(ROOT / f"data/indexes/nodes/node_{shard_id}_index.json"),
-            "--shard", str(ROOT / f"data/shards/shard_{shard_id}.jsonl"),
-            "--statistics", str(ROOT / "data/indexes/global_statistics.json")]
+            "--index", str(DATA_DIRECTORY / f"indexes/nodes/node_{shard_id}_index.json"),
+            "--shard", str(DATA_DIRECTORY / f"shards/shard_{shard_id}.jsonl"),
+            "--statistics", str(DATA_DIRECTORY / "indexes/global_statistics.json")]
 
 
 def process_state(node_id: str) -> str:
@@ -77,7 +78,16 @@ def start_node(node_id: str) -> dict[str, str]:
 def stop_node(node_id: str) -> dict[str, str]:
     process = node_processes.get(node_id)
     if process and process.poll() is None:
-        process.terminate()
+        if sys.platform == "win32":
+            # Windows venv executables can be redirectors with the real gRPC
+            # service in a child process. Stop only this tracked child's tree.
+            outcome = subprocess.run(
+                ["taskkill", "/PID", str(process.pid), "/T", "/F"], capture_output=True, text=True,
+            )
+            if outcome.returncode and process.poll() is None:
+                raise RuntimeError(f"Could not stop {node_id}: {outcome.stderr or outcome.stdout}")
+        else:
+            process.terminate()
         process.wait(timeout=3)
     node_processes.pop(node_id, None)
     return {"node_id": node_id, "state": "stopped"}
@@ -89,10 +99,13 @@ app.mount("/", StaticFiles(directory=WEB_DIRECTORY, html=True), name="web")
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run the browser-facing distributed search coordinator.")
     parser.add_argument("--config", type=Path, default=ROOT / "coordinator/config/coordinator_config.json")
+    parser.add_argument("--data-directory", type=Path, default=ROOT / "data",
+                        help="Directory containing shards and indexes used by the node Start controls.")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)
     arguments = parser.parse_args()
-    global coordinator
+    global coordinator, DATA_DIRECTORY
+    DATA_DIRECTORY = arguments.data_directory.resolve()
     coordinator = SearchCoordinator(load_config(arguments.config))
     uvicorn.run(app, host=arguments.host, port=arguments.port)
 

@@ -21,6 +21,25 @@ The partitioner sorts document IDs and splits them into non-overlapping ranges. 
 
 The separate `indexing/` and `local_search/` components provide a single-process reference path; they are not required before a distributed index build.
 
+## Run the complete app on Windows
+
+Double-click **Start-App.cmd** in the repository folder. It prepares a reusable Python environment, builds the three indexes when missing, starts the HTTP API and all three search nodes, waits for a search to confirm all three nodes are healthy and verified, then opens [http://127.0.0.1:8000](http://127.0.0.1:8000). Python 3.10 or newer must be available as `python` or through the Windows `py` launcher. The existing parsed corpus at `data/documents.jsonl` is required; starting the app does not crawl websites.
+
+The environment, generated indexes, configuration, process records and logs live under `%USERPROFILE%\DistributedSearchEngine\<repository-path-hash>`. This keeps generated files outside the repository folder and preserves the repository's original corpus and shards. Using the profile directory also keeps the runtime accessible from both the Codex desktop app and Windows Explorer. The Python environment uses `--system-site-packages` to reuse compatible packages already installed on this PC, while `pip install -r requirements.txt` installs any missing pinned dependencies. First-time installation can require internet; subsequent starts reuse the environment and indexes. Moving the repository creates a separate runtime folder.
+
+To stop the API and its nodes, double-click **Stop-App.cmd**. Repeated starts reuse a tracked running app and restart any stopped nodes. After a reboot, run **Start-App.cmd** again; no terminal setup is needed. The launchers validate recorded process identities and never stop an unrelated application merely because it holds a port. Keep ports 8000 and 50051–50053 available. A failed start prints its error and the log location.
+
+From PowerShell, you can also use:
+
+```powershell
+.\Start-App.cmd -NoBrowser
+.\Stop-App.cmd
+# Stop the app first, then rebuild after changing the parsed corpus:
+.\Start-App.cmd -RebuildIndexes
+```
+
+Before a rebuild, previous generated runtime shards and indexes are copied to a dated `backups` folder. If the parsed corpus is missing, follow the crawler/parser instructions below. The manual pipeline remains available separately.
+
 ## Install and build
 
 Use Python 3.10 or newer. From the repository root:
