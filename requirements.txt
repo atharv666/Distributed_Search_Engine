@@ -1,0 +1,6 @@
+# Runtime and protobuf generation toolchain verified for this extension.
+grpcio==1.83.1
+grpcio-tools==1.83.1
+protobuf==7.36.1
+fastapi==0.141.1
+uvicorn==0.52.4

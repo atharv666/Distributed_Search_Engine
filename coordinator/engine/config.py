@@ -17,11 +17,18 @@ class CoordinatorConfig:
     node_timeout_seconds: float
     local_top_k: int
     final_top_k: int
+    global_statistics_file: Path | None = None
 
 
 def load_config(config_path: Path) -> CoordinatorConfig:
     data = json.loads(config_path.read_text(encoding="utf-8"))
     nodes = tuple(NodeAddress(**node) for node in data["nodes"])
-    if not nodes or data["node_timeout_seconds"] <= 0 or data["local_top_k"] < data["final_top_k"]:
+    if (not nodes or len({node.node_id for node in nodes}) != len(nodes)
+            or data["node_timeout_seconds"] <= 0 or data["final_top_k"] <= 0
+            or data["local_top_k"] < data["final_top_k"]):
         raise ValueError("Nodes/timeout must be valid and local_top_k must be at least final_top_k.")
-    return CoordinatorConfig(nodes, float(data["node_timeout_seconds"]), int(data["local_top_k"]), int(data["final_top_k"]))
+    statistics_path = data.get("global_statistics_file")
+    return CoordinatorConfig(
+        nodes, float(data["node_timeout_seconds"]), int(data["local_top_k"]), int(data["final_top_k"]),
+        config_path.parent.parent / statistics_path if statistics_path else None,
+    )

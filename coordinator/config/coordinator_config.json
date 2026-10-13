@@ -6,5 +6,6 @@
   ],
   "node_timeout_seconds": 3.0,
   "local_top_k": 20,
-  "final_top_k": 10
+  "final_top_k": 10,
+  "global_statistics_file": "../data/indexes/global_statistics.json"
 }

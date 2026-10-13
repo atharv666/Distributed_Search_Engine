@@ -1,10 +1,10 @@
 """Create node-local indexes, then aggregate globally comparable IDF values."""
 
-import hashlib
 import json
 import math
 from collections import defaultdict
 
+from distributed_systems.integrity import sha256_bytes, statistics_version
 from indexing.indexer.config import IndexConfig
 from indexing.indexer.index_builder import build_index, save_index
 
@@ -16,6 +16,15 @@ def build_distributed_indexes(config: DistributedIndexConfig) -> dict[str, objec
     global_document_count = manifest["global_document_count"]
     if global_document_count < 1:
         raise ValueError("At least one document is required to build an index.")
+
+    shard_ids = set()
+    for shard in manifest["shards"]:
+        shard_id = shard["shard_id"]
+        if isinstance(shard_id, bool) or not isinstance(shard_id, int) or shard_id < 0:
+            raise ValueError("Each shard ID must be a nonnegative integer.")
+        if shard_id in shard_ids:
+            raise ValueError(f"Duplicate shard ID {shard_id} in partition manifest.")
+        shard_ids.add(shard_id)
 
     config.indexes_directory.mkdir(parents=True, exist_ok=True)
     global_df: dict[str, int] = defaultdict(int)
@@ -32,10 +41,11 @@ def build_distributed_indexes(config: DistributedIndexConfig) -> dict[str, objec
         if local_index["document_count"] != shard["document_count"]:
             raise ValueError(f"Shard {shard_id} document count does not match manifest.")
         save_index(local_index, index_file)
+        index_hash = sha256_bytes(index_file.read_bytes())
         for term, entry in local_index["terms"].items():
             global_df[term] += entry["document_frequency"]
         node_indexes.append({"node_id": f"node_{shard_id}", "shard_id": shard_id, "file": index_file.name,
-                             "document_count": local_index["document_count"]})
+                             "document_count": local_index["document_count"], "index_hash": index_hash})
 
     statistics = {
         "format_version": 1,
@@ -50,8 +60,7 @@ def build_distributed_indexes(config: DistributedIndexConfig) -> dict[str, objec
 
 
 def _statistics_version(statistics: dict[str, object]) -> str:
-    payload = json.dumps(statistics, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    return hashlib.sha256(payload).hexdigest()[:16]
+    return statistics_version(statistics)
 
 
 def _read_json(path):

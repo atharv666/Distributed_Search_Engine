@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12proto/search.proto\x12\x11\x64istributedsearch\"-\n\rSearchRequest\x12\r\n\x05query\x18\x01 \x01(\t\x12\r\n\x05top_k\x18\x02 \x01(\x05\"p\n\x0cSearchResult\x12\x13\n\x0b\x64ocument_id\x18\x01 \x01(\x05\x12\r\n\x05score\x18\x02 \x01(\x01\x12\r\n\x05title\x18\x03 \x01(\t\x12\x0b\n\x03url\x18\x04 \x01(\t\x12\x0f\n\x07snippet\x18\x05 \x01(\t\x12\x0f\n\x07node_id\x18\x06 \x01(\t\"o\n\x0eSearchResponse\x12\x30\n\x07results\x18\x01 \x03(\x0b\x32\x1f.distributedsearch.SearchResult\x12\x0f\n\x07node_id\x18\x02 \x01(\t\x12\x1a\n\x12statistics_version\x18\x03 \x01(\t2^\n\rSearchService\x12M\n\x06Search\x12 .distributedsearch.SearchRequest\x1a!.distributedsearch.SearchResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12proto/search.proto\x12\x11\x64istributedsearch\"\\\n\rSearchRequest\x12\r\n\x05query\x18\x01 \x01(\t\x12\r\n\x05top_k\x18\x02 \x01(\x05\x12\x12\n\nrequest_id\x18\x03 \x01(\t\x12\x19\n\x11logical_timestamp\x18\x04 \x01(\x04\"p\n\x0cSearchResult\x12\x13\n\x0b\x64ocument_id\x18\x01 \x01(\x05\x12\r\n\x05score\x18\x02 \x01(\x01\x12\r\n\x05title\x18\x03 \x01(\t\x12\x0b\n\x03url\x18\x04 \x01(\t\x12\x0f\n\x07snippet\x18\x05 \x01(\t\x12\x0f\n\x07node_id\x18\x06 \x01(\t\"\xb5\x02\n\x0eSearchResponse\x12\x30\n\x07results\x18\x01 \x03(\x0b\x32\x1f.distributedsearch.SearchResult\x12\x0f\n\x07node_id\x18\x02 \x01(\t\x12\x1a\n\x12statistics_version\x18\x03 \x01(\t\x12\x12\n\nrequest_id\x18\x04 \x01(\t\x12\"\n\x1arequest_received_timestamp\x18\x05 \x01(\x04\x12\x1f\n\x17response_sent_timestamp\x18\x06 \x01(\x04\x12\x12\n\nindex_hash\x18\x07 \x01(\t\x12\x1b\n\x13\x65xpected_index_hash\x18\x08 \x01(\t\x12\x19\n\x11index_consistency\x18\t \x01(\t\x12\x1f\n\x17index_consistency_error\x18\n \x01(\t2^\n\rSearchService\x12M\n\x06Search\x12 .distributedsearch.SearchRequest\x1a!.distributedsearch.SearchResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,11 +32,11 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'proto.search_pb2', _globals
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_SEARCHREQUEST']._serialized_start=41
-  _globals['_SEARCHREQUEST']._serialized_end=86
-  _globals['_SEARCHRESULT']._serialized_start=88
-  _globals['_SEARCHRESULT']._serialized_end=200
-  _globals['_SEARCHRESPONSE']._serialized_start=202
-  _globals['_SEARCHRESPONSE']._serialized_end=313
-  _globals['_SEARCHSERVICE']._serialized_start=315
-  _globals['_SEARCHSERVICE']._serialized_end=409
+  _globals['_SEARCHREQUEST']._serialized_end=133
+  _globals['_SEARCHRESULT']._serialized_start=135
+  _globals['_SEARCHRESULT']._serialized_end=247
+  _globals['_SEARCHRESPONSE']._serialized_start=250
+  _globals['_SEARCHRESPONSE']._serialized_end=559
+  _globals['_SEARCHSERVICE']._serialized_start=561
+  _globals['_SEARCHSERVICE']._serialized_end=655
 # @@protoc_insertion_point(module_scope)

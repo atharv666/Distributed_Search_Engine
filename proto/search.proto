@@ -1,6 +1,22 @@
 syntax = "proto3";
 package distributedsearch;
 service SearchService { rpc Search(SearchRequest) returns (SearchResponse); }
-message SearchRequest { string query = 1; int32 top_k = 2; }
+message SearchRequest {
+  string query = 1;
+  int32 top_k = 2;
+  string request_id = 3;
+  uint64 logical_timestamp = 4;
+}
 message SearchResult { int32 document_id = 1; double score = 2; string title = 3; string url = 4; string snippet = 5; string node_id = 6; }
-message SearchResponse { repeated SearchResult results = 1; string node_id = 2; string statistics_version = 3; }
+message SearchResponse {
+  repeated SearchResult results = 1;
+  string node_id = 2;
+  string statistics_version = 3;
+  string request_id = 4;
+  uint64 request_received_timestamp = 5;
+  uint64 response_sent_timestamp = 6;
+  string index_hash = 7;
+  string expected_index_hash = 8;
+  string index_consistency = 9;
+  string index_consistency_error = 10;
+}
