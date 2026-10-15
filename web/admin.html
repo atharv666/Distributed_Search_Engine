@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Console</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="topbar">
+    <div><p class="eyebrow">ADMIN CONSOLE</p><h1>Cluster control and vector clocks</h1></div>
+    <nav><a href="index.html">Search</a><a class="active" href="admin.html">Admin</a></nav>
+  </header>
+
+  <main class="admin">
+    <section class="panel summary" id="summary" aria-live="polite"></section>
+
+    <section class="panel" id="processes-panel">
+      <div class="panel-head"><h2>Processes</h2>
+        <div class="actions">
+          <button class="btn" id="start-all">Start all</button>
+          <button class="btn danger" id="stop-all">Stop all</button>
+          <button class="btn ghost" id="reset-data" title="Stop everything and restore the original 30-document shards">Reset demo data</button>
+        </div>
+      </div>
+      <div id="banner" class="banner" hidden></div>
+      <div id="process-grid" class="process-grid"></div>
+      <p class="hint">Kill a coordinator or node to test failure handling. Vectors are written in the order [C1, C2, C3, N1, N2, N3]. Beacons arrive every <span id="beat-interval">3</span> s; a process that hears nothing for <span id="beat-timeout">9</span> s suspects the leader.</p>
+    </section>
+
+    <div class="two-col" id="add-row">
+      <section class="panel" id="add-panel">
+        <div class="panel-head"><h2>Add documents</h2></div>
+        <label for="url-input">URLs, one per line</label>
+        <textarea id="url-input" rows="3" placeholder="https://docs.python.org/3/library/asyncio.html"></textarea>
+        <div class="actions"><button class="btn primary" id="add-urls">Add URLs</button></div>
+        <details class="offline">
+          <summary>No internet? Add text directly</summary>
+          <input id="text-title" type="text" placeholder="Title">
+          <textarea id="text-content" rows="3" placeholder="Document text (at least 80 characters)"></textarea>
+          <div class="actions"><button class="btn" id="add-text">Add text</button><button class="btn" id="add-samples">Add 2 sample texts at once</button></div>
+        </details>
+        <p id="add-status" class="hint"></p>
+        <div id="add-results" class="add-results"></div>
+      </section>
+
+      <section class="panel" id="lifecycle-panel">
+        <div class="panel-head"><h2 id="lifecycle-title">Lifecycle</h2></div>
+        <div id="lifecycle" class="lifecycle"><p class="hint">Add a document, trigger a search or kill the leader. The steps appear here.</p></div>
+      </section>
+    </div>
+
+    <section class="panel" id="timeline-panel">
+      <div class="panel-head"><h2>Vector-clock timeline</h2>
+        <div class="actions">
+          <select id="op-select" aria-label="Operation to display"></select>
+          <button class="btn small" data-quick="add">Latest add</button>
+          <button class="btn small" data-quick="election">Latest election</button>
+          <button class="btn small" data-quick="search">Latest search</button>
+          <button class="btn small" data-quick="pair" title="Show the two most recent adds together and compare their indexing events">Compare last two adds</button>
+          <button class="btn small" data-quick="beacon">Beacons</button>
+          <button class="btn primary small" id="replay">▶ Replay</button>
+          <select id="replay-speed" aria-label="Replay speed"><option value="900">slow</option><option value="500" selected>normal</option><option value="220">fast</option></select>
+          <label class="inline"><input type="checkbox" id="show-vectors"> show full vectors on the dots</label>
+        </div>
+      </div>
+      <p id="replay-caption" class="caption">Each dot is an event on one process. Dots show that process's own counter. Arrows are messages: the receiver takes the element-wise maximum of both vectors, then adds one.</p>
+      <div class="legend">
+        <span><i class="shape send"></i>send</span><span><i class="shape receive"></i>receive</span><span><i class="shape local"></i>local event</span>
+        <span class="sep"></span>
+        <span><i class="dot" style="background:var(--add)"></i>add</span><span><i class="dot" style="background:var(--election)"></i>election</span><span><i class="dot" style="background:var(--search)"></i>search</span><span><i class="dot" style="background:var(--sync)"></i>sync</span><span><i class="dot" style="background:var(--beacon)"></i>beacon</span>
+      </div>
+      <div id="timeline" class="timeline"></div>
+    </section>
+
+    <section class="panel" id="trace-panel">
+      <div class="panel-head"><h2>Vector trace <span class="order">[C1, C2, C3, N1, N2, N3]</span></h2>
+        <div class="actions chips"><label><input type="checkbox" id="show-merge" checked> show the max-merge arithmetic for receives</label></div>
+      </div>
+      <p class="hint note">Each row is one event, in causal order. A vector has one counter per process, in the order shown above, for example
+        <span class="vector">[0, 0, 1, 0, 0, 0]</span> means "C3 has done one event and nobody else has done anything yet".
+        <span class="vc chg">Pink</span> entries changed at this event; the <span class="vc own">underlined</span> entry is the process's own counter.
+        Click a row (or a dot) to inspect it, click a second one to compare.</p>
+      <div id="vtrace" class="vtrace"></div>
+    </section>
+
+    <section class="panel" id="log-panel">
+      <div class="panel-head"><h2>Event log</h2>
+        <div class="actions chips" id="filters">
+          <label><input type="checkbox" data-cat="add" checked> add</label>
+          <label><input type="checkbox" data-cat="election" checked> election</label>
+          <label><input type="checkbox" data-cat="search" checked> search</label>
+          <label><input type="checkbox" data-cat="sync" checked> sync</label>
+          <label><input type="checkbox" data-cat="beacon"> beacon</label>
+        </div>
+      </div>
+      <div id="event-log" class="event-log"></div>
+    </section>
+    <aside id="compare" class="inspector" hidden></aside>
+  </main>
+  <div id="tooltip" class="tooltip" hidden></div>
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -1,6 +1,280 @@
 syntax = "proto3";
 package distributedsearch;
-service SearchService { rpc Search(SearchRequest) returns (SearchResponse); }
-message SearchRequest { string query = 1; int32 top_k = 2; }
-message SearchResult { int32 document_id = 1; double score = 2; string title = 3; string url = 4; string snippet = 5; string node_id = 6; }
-message SearchResponse { repeated SearchResult results = 1; string node_id = 2; string statistics_version = 3; }
+
+// ---------------------------------------------------------------------------
+// Shared building blocks
+// ---------------------------------------------------------------------------
+
+// The explicit vector-clock field. Every clocked request and reply carries one.
+//   clock  : the sender's full vector clock {process_id -> counter}
+//   msg_id : links a send event to its receive event (the reply uses "<id>:reply")
+//   op     : operation tag (document / election / search) so the admin UI can group events
+//   sender : which process stamped the message
+message Stamp {
+  map<string, uint64> clock = 1;
+  string msg_id = 2;
+  string op = 3;
+  string sender = 4;
+}
+
+message Document {
+  int32 document_id = 1;
+  string title = 2;
+  string url = 3;
+  string source = 4;
+  string content = 5;
+  int32 content_length = 6;
+}
+
+// One replicated change of the global statistics: "document doc_id went to node_id and
+// contains these unique terms". Applying delta number v turns statistics version v-1 into v.
+message Delta {
+  uint32 version = 1;
+  int32 doc_id = 2;
+  string node_id = 3;
+  repeated string terms = 4;
+  string title = 5;
+  string url = 6;
+}
+
+message SearchResult {
+  int32 document_id = 1;
+  double score = 2;
+  string title = 3;
+  string url = 4;
+  string snippet = 5;
+  string node_id = 6;
+}
+
+// ---------------------------------------------------------------------------
+// Messages used by both coordinators and nodes
+// ---------------------------------------------------------------------------
+
+// Leader -> everyone, periodically ("I am alive").
+message HeartbeatRequest {
+  string leader_id = 1;
+  uint32 epoch = 2;
+  uint32 stats_version = 3;   // the leader's committed statistics version
+  uint32 beat = 4;            // beat number, for display
+  Stamp stamp = 15;
+}
+message HeartbeatReply {
+  string process_id = 1;
+  bool ok = 2;
+  bool stale = 3;             // the receiver already follows a newer epoch
+  uint32 epoch = 4;
+  string leader_id = 5;
+  uint32 stats_version = 6;   // the receiver's own statistics version (lets the leader detect lag)
+  Stamp stamp = 15;
+}
+
+message AnnounceRequest {
+  string leader_id = 1;
+  uint32 epoch = 2;
+  uint32 stats_version = 3;
+  Stamp stamp = 15;
+}
+message AnnounceReply {
+  string process_id = 1;
+  bool accepted = 2;
+  uint32 epoch = 3;           // receiver's highest epoch (lets a rejected announcer catch up)
+  string leader_id = 4;
+  Stamp stamp = 15;
+}
+
+// Used by the leader to push statistics deltas to nodes (ApplyStatistics) and to standby
+// coordinators (ReplicateDelta).
+message ApplyStatisticsRequest {
+  uint32 epoch = 1;
+  string leader_id = 2;
+  repeated Delta deltas = 3;
+  Stamp stamp = 15;
+}
+message ApplyStatisticsReply {
+  string process_id = 1;
+  bool ok = 2;
+  bool stale = 3;
+  bool behind = 4;            // a gap: the receiver needs older deltas first
+  uint32 epoch = 5;
+  uint32 version = 6;         // the receiver's statistics version after this call
+  Stamp stamp = 15;
+}
+
+// Observer query used by the web server and by booting processes. Not clocked.
+message StatusRequest {}
+message StatusReply {
+  string process_id = 1;
+  string kind = 2;            // "coordinator" | "node"
+  string role = 3;            // LEADER | STANDBY | CANDIDATE (coordinators), FOLLOWER (nodes)
+  string leader_id = 4;
+  uint32 epoch = 5;
+  uint32 stats_version = 6;
+  uint32 committed_version = 7;
+  bool ready = 8;
+  double last_beat_age = 9;   // seconds since the last beacon was received
+  double beat_timeout = 10;   // seconds without a beacon before the leader is suspected
+  uint32 beacons_sent = 11;
+  uint32 beacons_received = 12;
+  int32 doc_count = 13;       // nodes: documents on this shard
+  int32 total_docs = 14;      // global N as this process knows it
+  int32 next_doc_id = 15;
+  map<string, int32> node_counts = 16;
+  map<string, uint64> clock = 17;
+  map<string, bool> node_alive = 18;   // leader's view of which nodes answered the last beacon
+}
+
+// ---------------------------------------------------------------------------
+// Node service
+// ---------------------------------------------------------------------------
+
+message NodeSearchRequest {
+  string query = 1;
+  int32 top_k = 2;
+  uint32 epoch = 3;
+  Stamp stamp = 15;
+}
+message NodeSearchReply {
+  repeated SearchResult results = 1;
+  string node_id = 2;
+  uint32 stats_version = 3;
+  Stamp stamp = 15;
+}
+
+message AddDocumentRequest {
+  uint32 epoch = 1;
+  string leader_id = 2;
+  Document document = 3;
+  Stamp stamp = 15;
+}
+message AddDocumentReply {
+  string node_id = 1;
+  bool ok = 2;
+  bool stale = 3;
+  uint32 epoch = 4;
+  string error = 5;
+  int32 doc_count = 6;        // documents now on this shard
+  int32 doc_length = 7;       // tokens in the new document
+  repeated string terms = 8;  // unique terms of the new document (basis of the delta)
+  Stamp stamp = 15;
+}
+
+service NodeService {
+  rpc Search(NodeSearchRequest) returns (NodeSearchReply);
+  rpc AddDocument(AddDocumentRequest) returns (AddDocumentReply);
+  rpc ApplyStatistics(ApplyStatisticsRequest) returns (ApplyStatisticsReply);
+  rpc Heartbeat(HeartbeatRequest) returns (HeartbeatReply);
+  rpc Announce(AnnounceRequest) returns (AnnounceReply);
+  rpc GetStatus(StatusRequest) returns (StatusReply);
+}
+
+// ---------------------------------------------------------------------------
+// Coordinator service
+// ---------------------------------------------------------------------------
+
+message ElectionRequest {
+  string from_id = 1;
+  uint32 epoch = 2;
+  Stamp stamp = 15;
+}
+message ElectionReply {
+  string process_id = 1;
+  bool ok = 2;                // "OK, I am higher than you and will take over the election"
+  uint32 epoch = 3;
+  string leader_id = 4;
+  Stamp stamp = 15;
+}
+
+message PingRequest {
+  string from_id = 1;
+  Stamp stamp = 15;
+}
+message PingReply {
+  string process_id = 1;
+  string role = 2;
+  uint32 epoch = 3;
+  Stamp stamp = 15;
+}
+
+// A node (or standby coordinator) reports that it stopped hearing the leader.
+message SuspectRequest {
+  string reporter_id = 1;
+  string leader_id = 2;
+  uint32 epoch = 3;
+  double silence_seconds = 4;
+  Stamp stamp = 15;
+}
+message SuspectReply {
+  string process_id = 1;
+  string action = 2;          // verifying | already_handling | ignored_outdated | ignored_i_am_leader
+  Stamp stamp = 15;
+}
+
+message DeltasRequest {
+  string requester_id = 1;
+  uint32 since_version = 2;
+  Stamp stamp = 15;
+}
+message DeltasReply {
+  string process_id = 1;
+  uint32 version = 2;
+  repeated Delta deltas = 3;
+  Stamp stamp = 15;
+}
+
+// Web server -> leader. The web server is an outside client, so these are not clocked.
+message SubmitRequest {
+  string operation_id = 1;
+  Document document = 2;      // document_id is assigned by the leader
+}
+message SubmitReply {
+  bool ok = 1;
+  string error = 2;
+  string leader_hint = 3;
+  string coordinator_id = 4;
+  uint32 epoch = 5;
+  int32 doc_id = 6;
+  string node_id = 7;
+  uint32 version = 8;
+  string operation_id = 9;
+}
+
+message SearchRequest {
+  string query = 1;
+  int32 top_k = 2;
+}
+message NodeStatus {
+  string node_id = 1;
+  string address = 2;
+  string status = 3;          // up | unavailable | stale_version | stale_epoch
+  double latency_ms = 4;
+  int32 candidate_count = 5;
+  uint32 stats_version = 6;
+  bool accepted = 7;
+  string error = 8;
+}
+message SearchReply {
+  repeated SearchResult results = 1;
+  repeated NodeStatus node_status = 2;
+  int32 healthy_nodes = 3;
+  int32 total_nodes = 4;
+  int32 candidate_count = 5;
+  double elapsed_ms = 6;
+  string coordinator_id = 7;
+  uint32 epoch = 8;
+  uint32 stats_version = 9;
+  string role = 10;
+  string operation_id = 11;
+}
+
+service CoordinatorService {
+  rpc Heartbeat(HeartbeatRequest) returns (HeartbeatReply);
+  rpc Election(ElectionRequest) returns (ElectionReply);
+  rpc Announce(AnnounceRequest) returns (AnnounceReply);
+  rpc Ping(PingRequest) returns (PingReply);
+  rpc ReportSuspect(SuspectRequest) returns (SuspectReply);
+  rpc ReplicateDelta(ApplyStatisticsRequest) returns (ApplyStatisticsReply);
+  rpc GetDeltasSince(DeltasRequest) returns (DeltasReply);
+  rpc SubmitDocument(SubmitRequest) returns (SubmitReply);
+  rpc Search(SearchRequest) returns (SearchReply);
+  rpc GetStatus(StatusRequest) returns (StatusReply);
+}

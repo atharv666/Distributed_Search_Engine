@@ -1,0 +1,22 @@
+{
+  "data_directory": "../../data",
+  "web": {"host": "127.0.0.1", "port": 8000},
+  "coordinators": [
+    {"id": "C1", "address": "127.0.0.1:50061"},
+    {"id": "C2", "address": "127.0.0.1:50062"},
+    {"id": "C3", "address": "127.0.0.1:50063"}
+  ],
+  "nodes": [
+    {"id": "N1", "address": "127.0.0.1:50051", "shard": 1},
+    {"id": "N2", "address": "127.0.0.1:50052", "shard": 2},
+    {"id": "N3", "address": "127.0.0.1:50053", "shard": 3}
+  ],
+  "timing": {
+    "heartbeat_interval_seconds": 3,
+    "missed_beats_before_suspect": 3,
+    "rpc_timeout_seconds": 3,
+    "election_wait_seconds": 6,
+    "boot_grace_seconds": 1.5
+  },
+  "search": {"local_top_k": 20, "final_top_k": 10}
+}

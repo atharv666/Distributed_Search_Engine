@@ -25,7 +25,7 @@ if _version_not_supported:
     )
 
 
-class SearchServiceStub:
+class NodeServiceStub:
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -35,13 +35,38 @@ class SearchServiceStub:
             channel: A grpc.Channel.
         """
         self.Search = channel.unary_unary(
-                '/distributedsearch.SearchService/Search',
-                request_serializer=proto_dot_search__pb2.SearchRequest.SerializeToString,
-                response_deserializer=proto_dot_search__pb2.SearchResponse.FromString,
+                '/distributedsearch.NodeService/Search',
+                request_serializer=proto_dot_search__pb2.NodeSearchRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.NodeSearchReply.FromString,
+                _registered_method=True)
+        self.AddDocument = channel.unary_unary(
+                '/distributedsearch.NodeService/AddDocument',
+                request_serializer=proto_dot_search__pb2.AddDocumentRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.AddDocumentReply.FromString,
+                _registered_method=True)
+        self.ApplyStatistics = channel.unary_unary(
+                '/distributedsearch.NodeService/ApplyStatistics',
+                request_serializer=proto_dot_search__pb2.ApplyStatisticsRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.ApplyStatisticsReply.FromString,
+                _registered_method=True)
+        self.Heartbeat = channel.unary_unary(
+                '/distributedsearch.NodeService/Heartbeat',
+                request_serializer=proto_dot_search__pb2.HeartbeatRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.HeartbeatReply.FromString,
+                _registered_method=True)
+        self.Announce = channel.unary_unary(
+                '/distributedsearch.NodeService/Announce',
+                request_serializer=proto_dot_search__pb2.AnnounceRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.AnnounceReply.FromString,
+                _registered_method=True)
+        self.GetStatus = channel.unary_unary(
+                '/distributedsearch.NodeService/GetStatus',
+                request_serializer=proto_dot_search__pb2.StatusRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.StatusReply.FromString,
                 _registered_method=True)
 
 
-class SearchServiceServicer:
+class NodeServiceServicer:
     """Missing associated documentation comment in .proto file."""
 
     def Search(self, request, context):
@@ -50,23 +75,78 @@ class SearchServiceServicer:
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def AddDocument(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
-def add_SearchServiceServicer_to_server(servicer, server):
+    def ApplyStatistics(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Heartbeat(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Announce(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetStatus(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_NodeServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Search': grpc.unary_unary_rpc_method_handler(
                     servicer.Search,
-                    request_deserializer=proto_dot_search__pb2.SearchRequest.FromString,
-                    response_serializer=proto_dot_search__pb2.SearchResponse.SerializeToString,
+                    request_deserializer=proto_dot_search__pb2.NodeSearchRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.NodeSearchReply.SerializeToString,
+            ),
+            'AddDocument': grpc.unary_unary_rpc_method_handler(
+                    servicer.AddDocument,
+                    request_deserializer=proto_dot_search__pb2.AddDocumentRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.AddDocumentReply.SerializeToString,
+            ),
+            'ApplyStatistics': grpc.unary_unary_rpc_method_handler(
+                    servicer.ApplyStatistics,
+                    request_deserializer=proto_dot_search__pb2.ApplyStatisticsRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.ApplyStatisticsReply.SerializeToString,
+            ),
+            'Heartbeat': grpc.unary_unary_rpc_method_handler(
+                    servicer.Heartbeat,
+                    request_deserializer=proto_dot_search__pb2.HeartbeatRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.HeartbeatReply.SerializeToString,
+            ),
+            'Announce': grpc.unary_unary_rpc_method_handler(
+                    servicer.Announce,
+                    request_deserializer=proto_dot_search__pb2.AnnounceRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.AnnounceReply.SerializeToString,
+            ),
+            'GetStatus': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStatus,
+                    request_deserializer=proto_dot_search__pb2.StatusRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.StatusReply.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'distributedsearch.SearchService', rpc_method_handlers)
+            'distributedsearch.NodeService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('distributedsearch.SearchService', rpc_method_handlers)
+    server.add_registered_method_handlers('distributedsearch.NodeService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class SearchService:
+class NodeService:
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -83,9 +163,603 @@ class SearchService:
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/distributedsearch.SearchService/Search',
+            '/distributedsearch.NodeService/Search',
+            proto_dot_search__pb2.NodeSearchRequest.SerializeToString,
+            proto_dot_search__pb2.NodeSearchReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def AddDocument(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/distributedsearch.NodeService/AddDocument',
+            proto_dot_search__pb2.AddDocumentRequest.SerializeToString,
+            proto_dot_search__pb2.AddDocumentReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ApplyStatistics(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/distributedsearch.NodeService/ApplyStatistics',
+            proto_dot_search__pb2.ApplyStatisticsRequest.SerializeToString,
+            proto_dot_search__pb2.ApplyStatisticsReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Heartbeat(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/distributedsearch.NodeService/Heartbeat',
+            proto_dot_search__pb2.HeartbeatRequest.SerializeToString,
+            proto_dot_search__pb2.HeartbeatReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Announce(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/distributedsearch.NodeService/Announce',
+            proto_dot_search__pb2.AnnounceRequest.SerializeToString,
+            proto_dot_search__pb2.AnnounceReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetStatus(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/distributedsearch.NodeService/GetStatus',
+            proto_dot_search__pb2.StatusRequest.SerializeToString,
+            proto_dot_search__pb2.StatusReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+
+class CoordinatorServiceStub:
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.Heartbeat = channel.unary_unary(
+                '/distributedsearch.CoordinatorService/Heartbeat',
+                request_serializer=proto_dot_search__pb2.HeartbeatRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.HeartbeatReply.FromString,
+                _registered_method=True)
+        self.Election = channel.unary_unary(
+                '/distributedsearch.CoordinatorService/Election',
+                request_serializer=proto_dot_search__pb2.ElectionRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.ElectionReply.FromString,
+                _registered_method=True)
+        self.Announce = channel.unary_unary(
+                '/distributedsearch.CoordinatorService/Announce',
+                request_serializer=proto_dot_search__pb2.AnnounceRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.AnnounceReply.FromString,
+                _registered_method=True)
+        self.Ping = channel.unary_unary(
+                '/distributedsearch.CoordinatorService/Ping',
+                request_serializer=proto_dot_search__pb2.PingRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.PingReply.FromString,
+                _registered_method=True)
+        self.ReportSuspect = channel.unary_unary(
+                '/distributedsearch.CoordinatorService/ReportSuspect',
+                request_serializer=proto_dot_search__pb2.SuspectRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.SuspectReply.FromString,
+                _registered_method=True)
+        self.ReplicateDelta = channel.unary_unary(
+                '/distributedsearch.CoordinatorService/ReplicateDelta',
+                request_serializer=proto_dot_search__pb2.ApplyStatisticsRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.ApplyStatisticsReply.FromString,
+                _registered_method=True)
+        self.GetDeltasSince = channel.unary_unary(
+                '/distributedsearch.CoordinatorService/GetDeltasSince',
+                request_serializer=proto_dot_search__pb2.DeltasRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.DeltasReply.FromString,
+                _registered_method=True)
+        self.SubmitDocument = channel.unary_unary(
+                '/distributedsearch.CoordinatorService/SubmitDocument',
+                request_serializer=proto_dot_search__pb2.SubmitRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.SubmitReply.FromString,
+                _registered_method=True)
+        self.Search = channel.unary_unary(
+                '/distributedsearch.CoordinatorService/Search',
+                request_serializer=proto_dot_search__pb2.SearchRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.SearchReply.FromString,
+                _registered_method=True)
+        self.GetStatus = channel.unary_unary(
+                '/distributedsearch.CoordinatorService/GetStatus',
+                request_serializer=proto_dot_search__pb2.StatusRequest.SerializeToString,
+                response_deserializer=proto_dot_search__pb2.StatusReply.FromString,
+                _registered_method=True)
+
+
+class CoordinatorServiceServicer:
+    """Missing associated documentation comment in .proto file."""
+
+    def Heartbeat(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Election(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Announce(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Ping(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ReportSuspect(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ReplicateDelta(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetDeltasSince(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SubmitDocument(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Search(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetStatus(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_CoordinatorServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'Heartbeat': grpc.unary_unary_rpc_method_handler(
+                    servicer.Heartbeat,
+                    request_deserializer=proto_dot_search__pb2.HeartbeatRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.HeartbeatReply.SerializeToString,
+            ),
+            'Election': grpc.unary_unary_rpc_method_handler(
+                    servicer.Election,
+                    request_deserializer=proto_dot_search__pb2.ElectionRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.ElectionReply.SerializeToString,
+            ),
+            'Announce': grpc.unary_unary_rpc_method_handler(
+                    servicer.Announce,
+                    request_deserializer=proto_dot_search__pb2.AnnounceRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.AnnounceReply.SerializeToString,
+            ),
+            'Ping': grpc.unary_unary_rpc_method_handler(
+                    servicer.Ping,
+                    request_deserializer=proto_dot_search__pb2.PingRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.PingReply.SerializeToString,
+            ),
+            'ReportSuspect': grpc.unary_unary_rpc_method_handler(
+                    servicer.ReportSuspect,
+                    request_deserializer=proto_dot_search__pb2.SuspectRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.SuspectReply.SerializeToString,
+            ),
+            'ReplicateDelta': grpc.unary_unary_rpc_method_handler(
+                    servicer.ReplicateDelta,
+                    request_deserializer=proto_dot_search__pb2.ApplyStatisticsRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.ApplyStatisticsReply.SerializeToString,
+            ),
+            'GetDeltasSince': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetDeltasSince,
+                    request_deserializer=proto_dot_search__pb2.DeltasRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.DeltasReply.SerializeToString,
+            ),
+            'SubmitDocument': grpc.unary_unary_rpc_method_handler(
+                    servicer.SubmitDocument,
+                    request_deserializer=proto_dot_search__pb2.SubmitRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.SubmitReply.SerializeToString,
+            ),
+            'Search': grpc.unary_unary_rpc_method_handler(
+                    servicer.Search,
+                    request_deserializer=proto_dot_search__pb2.SearchRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.SearchReply.SerializeToString,
+            ),
+            'GetStatus': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetStatus,
+                    request_deserializer=proto_dot_search__pb2.StatusRequest.FromString,
+                    response_serializer=proto_dot_search__pb2.StatusReply.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'distributedsearch.CoordinatorService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('distributedsearch.CoordinatorService', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class CoordinatorService:
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def Heartbeat(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/distributedsearch.CoordinatorService/Heartbeat',
+            proto_dot_search__pb2.HeartbeatRequest.SerializeToString,
+            proto_dot_search__pb2.HeartbeatReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Election(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/distributedsearch.CoordinatorService/Election',
+            proto_dot_search__pb2.ElectionRequest.SerializeToString,
+            proto_dot_search__pb2.ElectionReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Announce(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/distributedsearch.CoordinatorService/Announce',
+            proto_dot_search__pb2.AnnounceRequest.SerializeToString,
+            proto_dot_search__pb2.AnnounceReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Ping(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/distributedsearch.CoordinatorService/Ping',
+            proto_dot_search__pb2.PingRequest.SerializeToString,
+            proto_dot_search__pb2.PingReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ReportSuspect(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/distributedsearch.CoordinatorService/ReportSuspect',
+            proto_dot_search__pb2.SuspectRequest.SerializeToString,
+            proto_dot_search__pb2.SuspectReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ReplicateDelta(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/distributedsearch.CoordinatorService/ReplicateDelta',
+            proto_dot_search__pb2.ApplyStatisticsRequest.SerializeToString,
+            proto_dot_search__pb2.ApplyStatisticsReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetDeltasSince(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/distributedsearch.CoordinatorService/GetDeltasSince',
+            proto_dot_search__pb2.DeltasRequest.SerializeToString,
+            proto_dot_search__pb2.DeltasReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SubmitDocument(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/distributedsearch.CoordinatorService/SubmitDocument',
+            proto_dot_search__pb2.SubmitRequest.SerializeToString,
+            proto_dot_search__pb2.SubmitReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Search(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/distributedsearch.CoordinatorService/Search',
             proto_dot_search__pb2.SearchRequest.SerializeToString,
-            proto_dot_search__pb2.SearchResponse.FromString,
+            proto_dot_search__pb2.SearchReply.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetStatus(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/distributedsearch.CoordinatorService/GetStatus',
+            proto_dot_search__pb2.StatusRequest.SerializeToString,
+            proto_dot_search__pb2.StatusReply.FromString,
             options,
             channel_credentials,
             insecure,

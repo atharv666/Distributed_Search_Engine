@@ -10,3 +10,5 @@ data/indexes/nodes/*.json
 data/shards/*.jsonl
 data/shards/*.json
 data/crawl.log
+data/state/
+data/logs/

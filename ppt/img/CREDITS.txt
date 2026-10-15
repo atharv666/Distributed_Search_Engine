@@ -1,0 +1,5 @@
+Image credits
+- Amazon S3 logo: Wikimedia Commons, "Amazon-S3-Logo.svg" (public domain).
+- AWS logo: Wikimedia Commons, "Amazon Web Services Logo.svg" (Amazon.com Inc., Apache License 2.0).
+- img1.jpg: illustration used on the opening slide (from the original deck).
+- All other images are screenshots of this project's own web UI, captured by scripts/capture_deck_images.py.
